@@ -3,8 +3,18 @@
 # See the file COPYING for more details.
 # Copyright (C) 2007-2021 NV Access Limited, Babbage B.V.
 
-from typing import Dict, Union, Set, Any, Optional, List
-from enum import Enum, auto
+from typing import (
+	Dict,
+	Set,
+	Any,
+	Optional,
+	List,
+)
+from enum import (
+	Enum,
+	auto,
+	unique,
+)
 
 from logHandler import log
 
@@ -697,6 +707,21 @@ _isCurrentLabels: Dict[Enum, str] = {
 	# Translators: Presented when a time item is marked as current in a collection of time items
 	IsCurrent.TIME: _("current time"),
 }
+
+
+@unique
+class DescriptionFrom(Enum):
+	"""Values to use within NVDA to denote possible values for DescriptionFrom.
+	These are used to determine how the source of the 'description' property if an NVDAObject.
+	"""
+	UNKNOWN = auto()
+	ARIA_DESCRIPTION = "aria-description"
+	ARIA_DESCRIBED_BY = "aria-describedby"
+	RUBY_ANNOTATION = "ruby-annotation"
+	SUMMARY = "summary"
+	TABLE_CAPTION = "table-caption"
+	TOOLTIP = "tooltip"  # (either via @title or aria-describedby + role="tooltip")
+	BUTTON_LABEL = "button-label"
 
 
 def processPositiveStates(role, states, reason: OutputReason, positiveStates=None):

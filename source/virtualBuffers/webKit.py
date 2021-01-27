@@ -5,6 +5,8 @@
 #See the file COPYING for more details.
 
 import ctypes
+import typing
+
 from . import VirtualBuffer, VirtualBufferTextInfo, VBufRemote_nodeHandle_t
 import controlTypes
 import NVDAObjects.IAccessible
@@ -16,9 +18,27 @@ from logHandler import log
 import textInfos
 import NVDAHelper
 
+
+def _getNormalizedDescriptionAttrs(attrs) -> typing.Dict[str, typing.Any]:
+	""" Provide description related attributes
+	@param attrs: source attributes for the TextInfo
+	@return: Optionally, normalized description attributes as appropriate:
+		"_description-from" and "description"
+	"""
+	ia2attrDescriptionFrom = attrs.get("IAccessible2::attribute_description-from")
+	try:
+		descFrom = controlTypes.DescriptionFrom(ia2attrDescriptionFrom)
+	except ValueError:
+		if ia2attrDescriptionFrom:
+			log.debugWarning(f"Unknown 'description-from' IA2Attribute value: {ia2attrDescriptionFrom}")
+		descFrom = controlTypes.ROLE_UNKNOWN
+	return {
+		"_description-from": descFrom
+	}
+
 class WebKit_TextInfo(VirtualBufferTextInfo):
 
-	def _normalizeControlField(self,attrs):
+	def _normalizeControlField(self, attrs: typing.Dict[str, typing.Any]):
 		accRole=attrs['IAccessible::role']
 		role = level = None
 		if accRole.isdigit():
@@ -33,12 +53,24 @@ class WebKit_TextInfo(VirtualBufferTextInfo):
 		if not role:
 			role = IAccessibleHandler.IAccessibleRolesToNVDARoles.get(accRole, controlTypes.ROLE_UNKNOWN)
 
-		states = set(IAccessibleHandler.IAccessibleStatesToNVDAStates[x] for x in [1 << y for y in range(32)] if int(attrs.get('IAccessible::state_%s' % x, 0)) and x in IAccessibleHandler.IAccessibleStatesToNVDAStates)
+		states = set(
+			IAccessibleHandler.IAccessibleStatesToNVDAStates[x]
+			for x in [1 << y for y in range(32)]
+			if (
+				int(attrs.get('IAccessible::state_%s' % x, 0))
+				and x in IAccessibleHandler.IAccessibleStatesToNVDAStates
+			)
+		)
 
 		attrs["role"] = role
 		attrs["states"] = states
 		if level:
 			attrs["level"] = level
+
+		attrs.update(
+			_getNormalizedDescriptionAttrs(attrs)
+		)
+
 		return super(WebKit_TextInfo, self)._normalizeControlField(attrs)
 
 class WebKit(VirtualBuffer):

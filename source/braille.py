@@ -617,6 +617,15 @@ class NVDAObjectRegion(Region):
 		placeholderValue = obj.placeholder
 		if placeholderValue and not obj._isTextEmpty:
 			placeholderValue = None
+		description = None
+		if obj.description and (
+			presConfig["reportObjectDescriptions"]
+			or (
+				config.conf["annotations"]["reportAriaDescription"]
+				and obj.descriptionFrom == controlTypes.DescriptionFrom.ARIA_DESCRIPTION
+			)
+		):
+			description = obj.description
 		text = getPropertiesBraille(
 			name=obj.name,
 			role=role,
@@ -625,7 +634,7 @@ class NVDAObjectRegion(Region):
 			placeholder=placeholderValue,
 			value=obj.value if not NVDAObjectHasUsefulText(obj) else None ,
 			states=obj.states,
-			description=obj.description if presConfig["reportObjectDescriptions"] else None,
+			description=description,
 			keyboardShortcut=obj.keyboardShortcut if presConfig["reportKeyboardShortcuts"] else None,
 			positionInfo=obj.positionInfo if presConfig["reportObjectPositionInformation"] else None,
 			cellCoordsText=obj.cellCoordsText if config.conf["documentFormatting"]["reportTableCellCoords"] else None,
@@ -667,6 +676,16 @@ def getControlFieldBraille(info, field, ancestors, reportStart, formatConfig):
 		):
 			return None
 
+	description = None
+	_descriptionFrom: controlTypes.DescriptionFrom = field.get("_description-from")
+	if (
+		config.conf["presentation"]["reportObjectDescriptions"]
+		or (
+			config.conf["annotations"]["reportAriaDescription"]
+			and _descriptionFrom == controlTypes.DescriptionFrom.ARIA_DESCRIPTION
+		)
+	):
+		description = field.get("description", None)
 	states = field.get("states", set())
 	value=field.get('value',None)
 	current = field.get('current', controlTypes.IsCurrent.NO)
@@ -679,6 +698,8 @@ def getControlFieldBraille(info, field, ancestors, reportStart, formatConfig):
 
 	if presCat == field.PRESCAT_LAYOUT:
 		text = []
+		if description:
+			text.append(getPropertiesBraille(description=description))
 		if current:
 			text.append(getPropertiesBraille(current=current))
 		if role == controlTypes.ROLE_GRAPHIC and content:
@@ -697,6 +718,7 @@ def getControlFieldBraille(info, field, ancestors, reportStart, formatConfig):
 			"columnSpan": field.get("table-columnsspanned"),
 			"includeTableCellCoords": reportTableCellCoords,
 			"current": current,
+			"description": description,
 		}
 		if reportTableHeaders:
 			props["columnHeaderText"] = field.get("table-columnheadertext")
@@ -711,7 +733,8 @@ def getControlFieldBraille(info, field, ancestors, reportStart, formatConfig):
 			"value": value,
 			"current": current,
 			"placeholder": placeholder,
-			"roleText": roleText
+			"roleText": roleText,
+			"description": description,
 		}
 		if field.get('alwaysReportName', False):
 			# Ensure that the name of the field gets presented even if normally it wouldn't.

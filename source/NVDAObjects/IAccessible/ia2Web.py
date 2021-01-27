@@ -6,7 +6,7 @@
 
 """Base classes with common support for browsers exposing IAccessible2.
 """
-
+import typing
 from ctypes import c_short
 from comtypes import COMError, BSTR
 import oleacc
@@ -33,6 +33,15 @@ class Ia2Web(IAccessible):
 			if level:
 				info['level']=level
 		return info
+
+	def _get_descriptionFrom(self) -> controlTypes.DescriptionFrom:
+		ia2attrDescriptionFrom: typing.Optional[str] = self.IA2Attributes.get("description-from")
+		try:
+			return controlTypes.DescriptionFrom(ia2attrDescriptionFrom)
+		except ValueError:
+			if ia2attrDescriptionFrom:
+				log.debugWarning(f"Unknown 'description-from' IA2Attribute value: {ia2attrDescriptionFrom}")
+			return controlTypes.DescriptionFrom.UNKNOWN
 
 	def _get_isCurrent(self) -> controlTypes.IsCurrent:
 		ia2attrCurrent: str = self.IA2Attributes.get("current", "false")
