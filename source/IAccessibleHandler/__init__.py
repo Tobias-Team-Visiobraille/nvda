@@ -23,6 +23,7 @@ import comtypes.client
 import oleacc
 import JABHandler
 import UIAHandler
+import textUtils
 
 from comInterfaces import Accessibility as IA
 
@@ -1073,7 +1074,7 @@ def getRecursiveTextFromIAccessibleTextObject(obj, startOffset=0, endOffset=-1):
 		return text
 	textList = []
 	for i, t in enumerate(text):
-		if ord(t) == 0xFFFC:
+		if ord(t) == ord(textUtils.OBJ_REPLACEMENT_CHAR):
 			try:
 				index = hypertextObject.hyperlinkIndex(i + startOffset)
 				childTextObject = hypertextObject.hyperlink(index).QueryInterface(IA.IAccessible)

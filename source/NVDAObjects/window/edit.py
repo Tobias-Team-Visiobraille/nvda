@@ -631,7 +631,7 @@ class ITextDocumentTextInfo(textInfos.TextInfo):
 		newTextList=[]
 		start=rangeObj.start
 		for offset in range(len(bufText)):
-			if ord(bufText[offset])==0xfffc:
+			if ord(bufText[offset]) == ord(textUtils.OBJ_REPLACEMENT_CHAR):
 				if embedRangeObj is None: embedRangeObj=rangeObj.duplicate
 				embedRangeObj.setRange(start+offset,start+offset+1)
 				label=self._getEmbeddedObjectLabel(embedRangeObj)
