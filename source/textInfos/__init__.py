@@ -12,6 +12,7 @@ A default implementation, L{NVDAObjects.NVDAObjectTextInfo}, is used to enable t
 from abc import abstractmethod
 import weakref
 import re
+import typing
 from typing import (
 	Any,
 	Union,
@@ -28,6 +29,8 @@ from controlTypes import OutputReason
 import locationHelper
 from logHandler import log
 
+if typing.TYPE_CHECKING:
+	import NVDAObjects
 
 SpeechSequence = List[Union[Any, str]]
 
@@ -333,19 +336,25 @@ class TextInfo(baseObject.AutoPropertyObject):
 	def _set_end(self, otherEndpoint: "TextInfoEndpoint"):
 		self.end.moveTo(otherEndpoint)
 
-	def _get_obj(self):
+	#: Typing information for auto-property: _get_obj
+	obj: "NVDAObjects.NVDAObject"
+
+	def _get_obj(self) -> "NVDAObjects.NVDAObject":
 		"""The object containing the range of text being represented."""
 		return self._obj()
 
 	def _get_unit_mouseChunk(self):
 		return config.conf["mouse"]["mouseTextUnit"]
 
+	#: Typing information for auto-property: _get_text
+	text: str
+
 	_abstract_text = True
-	def _get_text(self):
+
+	def _get_text(self) -> str:
 		"""The text with in this range.
 		Subclasses must implement this.
 		@return: The text.
-		@rtype: str
 		@note: The text is not guaranteed to be the exact length of the range in offsets.
 		"""
 		raise NotImplementedError
