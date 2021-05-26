@@ -283,25 +283,25 @@ class TreeCompoundTextInfo(CompoundTextInfo):
 			for field in ti._iterTextWithEmbeddedObjects(True, formatConfig=formatConfig):
 				if isinstance(field, str):
 					fields.append(field)
-				elif isinstance(field, int): # Embedded object
+				elif isinstance(field, int):  # Embedded object
 					if embedIndex is None:
 						embedIndex = self._getFirstEmbedIndex(ti)
 					else:
 						embedIndex += 1
-					field = ti.obj.getChild(embedIndex)
+					childObject: NVDAObject = ti.obj.getChild(embedIndex)
 					if not (
 						# Don't check for self._isObjectEditableText
 						# Only for named link destinations.
 						self._isNamedlinkDestination(obj)
 					):
-						controlField = self._getControlFieldForObject(field)
-						controlField["content"] = field.name
+						controlField = self._getControlFieldForObject(childObject)
+						controlField["content"] = childObject.name
 						fields.extend((
 							textInfos.FieldCommand("controlStart", controlField),
 							textUtils.OBJ_REPLACEMENT_CHAR,
 							textInfos.FieldCommand("controlEnd", None),
 						))
-				else:
+				else:  # field
 					fields.append(field)
 		return fields
 
