@@ -3,7 +3,7 @@
 #Copyright (C) 2008-2019 NV Access Limited, Babbage B.V.
 #This file is covered by the GNU General Public License.
 #See the file COPYING for more details.
-
+import typing
 from xml.parsers import expat
 import textInfos
 from logHandler import log
@@ -57,12 +57,12 @@ class XMLTextParser(object):
 		else:
 			cmdList.append(data)
 
-	def parse(self,XMLText):
+	def parse(self, XMLText) -> typing.List[textInfos.FieldCommand]:
 		parser = expat.ParserCreate('utf-8')
 		parser.StartElementHandler = self._startElementHandler
 		parser.EndElementHandler = self._EndElementHandler
 		parser.CharacterDataHandler = self._CharacterDataHandler
-		self._commandList = []
+		self._commandList: typing.List[textInfos.FieldCommand] = []
 		try:
 			parser.Parse(XMLText)
 		except Exception:
