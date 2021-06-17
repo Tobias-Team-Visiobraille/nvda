@@ -1,8 +1,7 @@
-#NVDAObjects/IAccessible/ia2TextMozilla.py
-#A part of NonVisual Desktop Access (NVDA)
-#This file is covered by the GNU General Public License.
-#See the file COPYING for more details.
-#Copyright (C) 2015-2019 NV Access Limited, Mozilla Corporation
+# A part of NonVisual Desktop Access (NVDA)
+# This file is covered by the GNU General Public License.
+# See the file COPYING for more details.
+# Copyright (C) 2015-2021 NV Access Limited, Mozilla Corporation
 
 """Support for the IAccessible2 rich text model first implemented by Mozilla.
 This is now used by other applications as well.
