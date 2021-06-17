@@ -1,7 +1,7 @@
 # A part of NonVisual Desktop Access (NVDA)
 # This file is covered by the GNU General Public License.
 # See the file COPYING for more details.
-# Copyright (C) 2015-2020 NV Access Limited, Babbage B.V., Leonard de Ruijter
+# Copyright (C) 2015-2021 NV Access Limited, Babbage B.V., Leonard de Ruijter
 
 from comtypes import COMError
 from comtypes.automation import VARIANT
