@@ -1,3 +1,8 @@
+# A part of NonVisual Desktop Access (NVDA)
+# Copyright (C) 2006-2021 NV Access Limited, Leonard de Ruijter, Joseph Lee, Renaud Paquay, pvagner
+# This file is covered by the GNU General Public License.
+# See the file COPYING for more details.
+
 import ctypes
 import re
 import eventHandler

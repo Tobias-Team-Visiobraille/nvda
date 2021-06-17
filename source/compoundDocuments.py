@@ -1,8 +1,7 @@
-#compoundDocuments.py
-#A part of NonVisual Desktop Access (NVDA)
-#This file is covered by the GNU General Public License.
-#See the file COPYING for more details.
-#Copyright (C) 2010-2018 NV Access Limited, Bram Duvigneau
+# A part of NonVisual Desktop Access (NVDA)
+# This file is covered by the GNU General Public License.
+# See the file COPYING for more details.
+# Copyright (C) 2010-2021 NV Access Limited, Bram Duvigneau
 import textUtils
 import winUser
 import textInfos
