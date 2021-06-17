@@ -1737,12 +1737,16 @@ def getControlFieldSpeech(  # noqa: C901
 	isCurrent = attrs.get('current', controlTypes.IsCurrent.NO)
 	placeholderValue=attrs.get('placeholder', None)
 	value=attrs.get('value',"")
+
+	description: Optional[str] = None
 	_descriptionFrom = attrs.get('_description-from', controlTypes.DescriptionFrom.UNKNOWN)
 	if (
 		(
 			config.conf["presentation"]["reportObjectDescriptions"]
 			and (
 				reason == OutputReason.FOCUS
+				# 'alwaysReportDescription' provides symmetry with 'alwaysReportName'.
+				# Not used internally, but may be used by addons.
 				or attrs.get('alwaysReportDescription', False)
 			)
 		)
@@ -1759,9 +1763,8 @@ def getControlFieldSpeech(  # noqa: C901
 			)
 		)
 	):
-		description = attrs.get('description', "")
-	else:
-		description=""
+		description = attrs.get('description')
+
 	level=attrs.get('level',None)
 
 	if presCat != attrs.PRESCAT_LAYOUT:

@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-#NVDAObjects/IAccessible/mozilla.py
-#A part of NonVisual Desktop Access (NVDA)
-#This file is covered by the GNU General Public License.
-#See the file COPYING for more details.
-#Copyright (C) 2006-2017 NV Access Limited, Peter Vágner
+# A part of NonVisual Desktop Access (NVDA)
+# This file is covered by the GNU General Public License.
+# See the file COPYING for more details.
+# Copyright (C) 2006-2021 NV Access Limited, Peter Vágner
 
 import IAccessibleHandler
 from comInterfaces import IAccessible2Lib as IA2
