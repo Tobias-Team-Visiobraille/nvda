@@ -281,10 +281,8 @@ class TreeCompoundTextInfo(CompoundTextInfo):
 
 		embedIndex = None
 		for ti in self._getTextInfos():
-			for field in ti._iterTextWithEmbeddedObjects(True, formatConfig=formatConfig):
-				if isinstance(field, str):
-					fields.append(field)
-				elif isinstance(field, int):  # Embedded object
+			for textWithEmbeddedObjectsItem in ti._iterTextWithEmbeddedObjects(True, formatConfig=formatConfig):
+				if isinstance(textWithEmbeddedObjectsItem, int):  # Embedded object
 					if embedIndex is None:
 						embedIndex = self._getFirstEmbedIndex(ti)
 					else:
@@ -302,8 +300,10 @@ class TreeCompoundTextInfo(CompoundTextInfo):
 							textUtils.OBJ_REPLACEMENT_CHAR,
 							textInfos.FieldCommand("controlEnd", None),
 						))
-				else:  # field
-					fields.append(field)
+				else:  # str or fieldCommand
+					if not isinstance(textWithEmbeddedObjectsItem, (str, textInfos.FieldCommand)):
+						log.error(f"Unexpected type: {textWithEmbeddedObjectsItem!r}")
+					fields.append(textWithEmbeddedObjectsItem)
 		return fields
 
 	def _findNextContent(self, origin, moveBack=False):
