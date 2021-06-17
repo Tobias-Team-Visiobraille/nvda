@@ -470,7 +470,10 @@ def test_tableInStyleDisplayTable():
 	)
 
 
-ariaDescriptionSample = """
+annotation = "User nearby, Aaron"
+linkDescription = "opens in a new tab"
+linkTitle = "conduct a search"
+ariaDescriptionSample = f"""
 		<div>
 			<div
 				contenteditable=""
@@ -479,17 +482,17 @@ ariaDescriptionSample = """
 				aria-multiline="true"
 			><p>This is a line with no annotation</p>
 			<p><span
-					aria-description="User nearby, Boaty McBoatface"
+					aria-description="{annotation}"
 				>Here is a sentence that is being edited by someone else.</span>
-				<b>Multiple authors can edit this document at the same time.</b></p>
+				<b>Multiple can edit this.</b></p>
 			<p>An element with a role, follow <a
 				href="www.google.com"
-				aria-description="opens in a new tab"
+				aria-description="{linkDescription}"
 				>to google's</a
 			> website</p>
 			<p>Testing the title attribute, <a
 				href="www.google.com"
-				title="conduct a search"
+				title="{linkTitle}"
 				>to google's</a
 			> website</p>
 			</div>
@@ -508,26 +511,39 @@ def test_ariaDescription_focusMode():
 		"edit  multi line  This is a line with no annotation\nFocus mode"
 	)
 
-	annotation = "User nearby, Boaty Mc Boatface"
 	actualSpeech = _chrome.getSpeechAfterKey('downArrow')
-	_asserts.strings_match(
+	# description-from hasn't reached Chrome stable yet.
+	# reporting aria-description only supported in Chrome canary 92.0.4479.0+
+	_builtIn.run_keyword_and_expect_error(
+		# expected_error
+		"Actual speech != Expected speech:"
+		" Here is a sentence that is being edited by someone else."
+		"  Multiple can edit this. != *",
+		# keyword
+		"strings_match",
+		# args
 		actualSpeech,
 		f"{annotation}  Here is a sentence that is being edited by someone else."
-		"  Multiple authors can edit this"
+		"  Multiple authors can edit this."
 	)
-	actualSpeech = _chrome.getSpeechAfterKey('downArrow')
-	_asserts.strings_match(
-		actualSpeech,
-		f"document at the same time."  # Due to screen layout
-	)
-	linkAnnotation = "opens in a new tab"
+
 	linkRole = "link"
 	linkName = "to google's"
 	actualSpeech = _chrome.getSpeechAfterKey('downArrow')
-	_asserts.strings_match(
+	# description-from hasn't reached Chrome stable yet.
+	# reporting aria-description only supported in Chrome canary 92.0.4479.0+
+	_builtIn.run_keyword_and_expect_error(
+		# expected_error
+		"Actual speech != Expected speech:"
+		f" An element with a role, follow  {linkRole}  {linkName}  website"
+		" != *",
+		# keyword
+		"strings_match",
+		# args
 		actualSpeech,
-		f"An element with a role, follow  {linkRole}  {linkAnnotation}  {linkName}  website"
+		f"An element with a role, follow  {linkRole}  {linkDescription}  {linkName}  website"
 	)
+
 	# 'title' attribute for link ("conduct a search") should not be announced.
 	# too often title is used without screen reader users in mind, and is overly verbose.
 	actualSpeech = _chrome.getSpeechAfterKey('downArrow')
@@ -547,25 +563,37 @@ def test_ariaDescription_browseMode():
 		"edit  multi line  This is a line with no annotation"
 	)
 
-	annotation = "User nearby, Boaty Mc Boatface"
 	actualSpeech = _chrome.getSpeechAfterKey('downArrow')
-	_asserts.strings_match(
+	# description-from hasn't reached Chrome stable yet.
+	# reporting aria-description only supported in Chrome canary 92.0.4479.0+
+	_builtIn.run_keyword_and_expect_error(
+		# expected_error
+		"Actual speech != Expected speech:"
+		" Here is a sentence that is being edited by someone else."
+		"  Multiple can edit this. != *",
+		# keyword
+		"strings_match",
+		# args
 		actualSpeech,
 		f"{annotation}  Here is a sentence that is being edited by someone else."
-		"  Multiple authors can edit this document at"
+		"  Multiple authors can edit this."
 	)
-	actualSpeech = _chrome.getSpeechAfterKey('downArrow')
-	_asserts.strings_match(
-		actualSpeech,
-		"the same time."
-	)
-	linkAnnotation = "opens in a new tab"
+
 	linkRole = "link"
 	linkName = "to google's"
 	actualSpeech = _chrome.getSpeechAfterKey('downArrow')
-	_asserts.strings_match(
+	# description-from hasn't reached Chrome stable yet.
+	# reporting aria-description only supported in Chrome canary 92.0.4479.0+
+	_builtIn.run_keyword_and_expect_error(
+		# expected_error
+		"Actual speech != Expected speech:"
+		f" An element with a role, follow  {linkRole}  {linkName}  website"
+		" != *",
+		# keyword
+		"strings_match",
+		# args
 		actualSpeech,
-		f"An element with a role, follow  {linkRole}  {linkAnnotation}  {linkName}  website"
+		f"An element with a role, follow  {linkRole}  {linkDescription}  {linkName}  website"
 	)
 
 	# 'title' attribute for link ("conduct a search") should not be announced.
@@ -583,19 +611,26 @@ def test_ariaDescription_sayAll():
 	_chrome.prepareChrome(ariaDescriptionSample)
 	actualSpeech = _chrome.getSpeechAfterKey("NVDA+downArrow")
 
-	annotation = "User nearby, Boaty Mc Boatface"
-	linkAnnotation = "opens in a new tab"
 	linkRole = "link"
 	linkName = "to google's"
-	_asserts.strings_match(
+
+	# description-from hasn't reached Chrome stable yet.
+	# reporting aria-description only supported in Chrome canary 92.0.4479.0+
+	_builtIn.run_keyword_and_expect_error(
+		# asserting multiline error messages doesn't seem to work, instead just Glob the details
+		# of the error message:
+		"Multiline strings are different:*",
+		# keyword
+		"strings_match",
+		# args
 		actualSpeech,
 		"\n".join([
 			"Test page load complete",
 			"edit  multi line  This is a line with no annotation",
 			f"{annotation}  Here is a sentence that is being edited by someone else.",
-			"Multiple authors can edit this document at  the same time.",
+			"Multiple authors can edit this.",
 			"An element with a role, "  # no comma, concat these two long strings.
-			f"follow  {linkRole}  {linkAnnotation}  {linkName}  website",
+			f"follow  {linkRole}  {linkDescription}  {linkName}  website",
 			# 'title' attribute for link ("conduct a search") should not be announced.
 			# too often title is used without screen reader users in mind, and is overly verbose.
 			f"Testing the title attribute,  {linkRole}  {linkName}  website"
