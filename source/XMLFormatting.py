@@ -49,8 +49,11 @@ class XMLTextParser(object):
 		else:
 			raise ValueError("unknown tag name: %s"%tagName)
 
-	def _CharacterDataHandler(self,data, processBufferedSurrogates=False):
+	def _CharacterDataHandler(self, data: typing.Optional[str], processBufferedSurrogates=False):
 		cmdList=self._commandList
+		if not isinstance(data, str):
+			dataStr = repr(data)
+			log.warning(f"unknown type for data: {dataStr}")
 		if cmdList and isinstance(cmdList[-1],str):
 			cmdList[-1] += data
 			if processBufferedSurrogates:
@@ -58,12 +61,14 @@ class XMLTextParser(object):
 		else:
 			cmdList.append(data)
 
-	def parse(self, XMLText) -> typing.List[textInfos.FieldCommand]:
+	CommandListT = typing.List[typing.Union[textInfos.FieldCommand, typing.Optional[str]]]
+
+	def parse(self, XMLText) -> CommandListT:
 		parser = expat.ParserCreate('utf-8')
 		parser.StartElementHandler = self._startElementHandler
 		parser.EndElementHandler = self._EndElementHandler
 		parser.CharacterDataHandler = self._CharacterDataHandler
-		self._commandList: typing.List[textInfos.FieldCommand] = []
+		self._commandList: XMLTextParser.CommandListT = []
 		try:
 			parser.Parse(XMLText)
 		except Exception:

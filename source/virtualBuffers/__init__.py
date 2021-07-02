@@ -267,8 +267,7 @@ class VirtualBufferTextInfo(browseMode.BrowseModeDocumentTextInfo,textInfos.offs
 		commandList: typing.List[textInfos.FieldCommand] = XMLFormatting.XMLTextParser().parse(text)
 		for command in commandList:
 			if not isinstance(command, textInfos.FieldCommand):
-				log.warning(f"unknown command type from parser: {command!s}")
-				continue
+				continue  # no need to normalize str or None
 
 			field = command.field
 			if isinstance(field, textInfos.ControlField):
