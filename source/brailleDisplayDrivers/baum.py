@@ -60,7 +60,7 @@ class BrailleDisplayDriver(braille.BrailleDisplayDriver):
 	_dev: hwIo.IoBase
 	name = "baum"
 	# Translators: Names of braille displays.
-	description = _("Baum/HumanWare/APH/Orbit braille displays")
+	description = _("VisioBraille/Baum/HumanWare/APH/Orbit braille displays")
 	isThreadSafe = True
 
 	@classmethod
